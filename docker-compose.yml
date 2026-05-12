@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: classicmodels
+    ports:
+      - "5432:5432"
+    volumes:
+      # Load the seed data when container starts for the first time
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
+      # Keep database files even after container stops
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d classicmodels"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: fastapi_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Where to find the database
+      DATABASE_URL: postgresql://admin:admin123@db:5432/classicmodels
+    depends_on:
+      # Wait for database to be healthy before starting API
+      db:
+        condition: service_healthy
+
+# Persistent storage for database files
+volumes:
+  pgdata:
