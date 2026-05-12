@@ -72,6 +72,24 @@ cd ai-fellowship-week2-backend
 
 ### 2. Create a `.env` file
 
+Create a `.env` file in the root of the project. You can copy the template below and update the values to match your setup.
+
+```env
+# PostgreSQL credentials — change these to your own
+POSTGRES_USER=your_username          # e.g. admin
+POSTGRES_PASSWORD=your_password      # e.g. secret123
+POSTGRES_DB=your_database_name       # e.g. classicmodels
+
+# These stay the same when running with Docker Compose
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+# Built from the values above — update user, password, and db name to match
+DATABASE_URL=postgresql://your_username:your_password@db:5432/your_database_name
+```
+
+Or copy-paste this example directly and update as needed:
+
 ```env
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=admin123
@@ -81,6 +99,8 @@ POSTGRES_PORT=5432
 DATABASE_URL=postgresql://admin:admin123@db:5432/classicmodels
 ```
 
+> **Note:** `.env` is listed in `.gitignore` and will not be committed. Never share your credentials publicly.
+
 ### 3. Run with Docker
 
 ```bash
@@ -89,7 +109,7 @@ docker compose up --build
 
 This will:
 - Start the PostgreSQL container
-- Run `seed.sql` to create and populate the `classicmodels` database
+- Run `seed.sql` to create and populate the database
 - Start the FastAPI server at `http://localhost:8000`
 
 ### 4. Access the API
